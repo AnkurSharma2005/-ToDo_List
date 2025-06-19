@@ -1,103 +1,126 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import React, { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+  
+function page() {
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [title, settitle] = useState("");
+  const [desc, setdesc] = useState("");
+  const [mainTask, setmainTask] = useState([]);
+  
+  let renderTask = <div className='flex w-full items-center justify-center'><h3 className='p-8 text-xl'>No List Available</h3></div>
+  
+
+  const submitHandler = (e)=>{
+    e.preventDefault();//this helps in preventing the reloading of the page after submitting  
+    setmainTask([...mainTask,{title , desc , completed:false}]);
+    settitle("");
+    setdesc("");
+    console.log(mainTask);
+  }
+  const deleteTask = (i)=>{
+    let copyTask = [...mainTask];
+    copyTask.splice(i,1);
+    setmainTask(copyTask);
+  }
+  const completeTask = (i)=>{
+    const updatedTasks = [...mainTask];
+    updatedTasks[i].completed = true;
+    setmainTask(updatedTasks);
+    notify();
+    setTimeout(() => {
+    deleteTask(i);
+  }, 3000);
+  }
+  const notify = ()=>{
+    toast("Task is marked as Completed!");
+  }
+  const deletenotify = ()=>{
+    toast("Task is deleted successfully!");
+  }
+  if(mainTask.length>0){
+    renderTask = mainTask.map((e,i)=>{
+    return (
+      <li key={i} className={` flex items-center w-full justify-between ${e.completed ? "bg-green-300" :"bg-inherit"}  `}>
+      <div className='flex items-center m-3 justify-center w-1/5  font-bold text-2xl whitespace-normal break-word'>{e.title}</div>
+      <div className='flex grow items-center justify-center w-3/5 font-semibold text-xl'>{e.desc}</div>
+      <div className='Buttons flex items-center justify-around w-1/5 py-3 px-6'><button 
+        onClick={()=>{
+          deleteTask(i);
+          deletenotify(); 
+        }}
+        className='bg-red-400 text-white hover:cursor-pointer hover:bg-red-600 px-4 py-2 rounded font-bold m-5'>Delete</button>
+      <button 
+        onClick={()=>{
+          completeTask(i);
+          
+        }}
+        className={`transition-all ${e.completed ?"bg-green-600 cursor-pointer":"bg-green-400 hover:bg-green-500 hover:cursor-pointer" } text-white   px-4 py-2 rounded font-bold m-5`}>{e.completed ? "Completed ✅" : "Complete"}</button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    </li>
+  
+    )
+
+  })
+  }
+
+  return (
+    <>
+    <h1 className='bg-black text-white p-5 font-bold text-center text-3xl'>Ankur's ToDo</h1>
+    <form className='w-full p-5 flex items-center justify-between '
+      onSubmit={submitHandler}
+    >
+        <input type='text' className='p-2 border-4 border-black w-2/6 mx-2 text-2xl rounded' placeholder='Enter Your Task'
+               value = {title}
+               onChange={(e)=>{
+                settitle(e.target.value)
+               }}
+               required 
+        />
+        <input type='text' className='p-2 border-4 border-black  w-3/6 mx-2 text-2xl rounded' placeholder='Enter Description here'
+              value={desc}
+              onChange={(e)=>{
+                setdesc(e.target.value)
+              }}
+        />
+        <div className='flex items-center justify-center  w-1/6 '>
+        <button className='bg-black text-white font-bold px-5 py-3 rounded-2xl' >Add Task</button>
+        </div>
+    </form>
+    <div className='header border-2 border-black h-15 mx-5 flex '> 
+        <div className='title border-2 border-black w-1/5 h-full flex items-center justify-center text-3xl font-bold '>TITLE</div>
+        <div className='title border-2 border-black w-3/5 h-full flex items-center justify-center text-3xl font-bold '>DESCRIPTION</div>
+        <div className='title border-2 border-black w-1/5 h-full flex items-center justify-center text-3xl font-bold '>ACTION </div>
+      </div>
+    <div className=" bg-gray-200 mx-5">
+      <ul className=''>
+        {renderTask}
+      </ul>
     </div>
-  );
+    <ToastContainer position='top-center' />
+    </>
+  )
 }
+
+export default page
+
+// if(mainTask.length>0){
+//     renderTask = mainTask.map((e,i)=>{
+//     return (
+//       <li key={i} className='mb-4 flex items-center justify-around border-2 border-amber-400'>
+//       <div className='flex items-center justify-between w-2/3 border-2 border-black'>
+//         <h5 className="text-2xl font-bold ">{e.title}</h5>
+//         <h6 className='text-xl font-semibold'>{e.desc}</h6>
+//       </div>
+//       <button 
+//         onClick={()=>{
+//           deleteTask(i)
+//         }}
+//         className='bg-red-400 text-white   px-4 py-2 rounded font-bold'>Delete</button>
+//     </li>
+  
+//     )
+
+//   })
+//   }
